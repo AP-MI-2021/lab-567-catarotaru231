@@ -1,55 +1,70 @@
-from Domain.obiect import create_obiect, get_descriere, get_locatie, get_id, get_pret_achizitie, get_nume
+from Domain.obiect import creeaza_obiect, get_ID
 
-def add_obiect(obiect, id, nume, descriere, pret_achizitie, locatie):
 
-    '''
-
-    Adaugam in memorie, in lista de obiecte un obiect format din field-urile: id, nume, descriere, pret_achizitie, locatie
-    :param obiect: lista de obiecte
-    :param id: string
+def adauga_obiect(ID, nume, descriere, pret_achizitie, locatie, lista):
+    """
+    functia adauga un obiect intr-o lista
+    :param ID: string
     :param nume: string
     :param descriere: string
     :param pret_achizitie: float
     :param locatie: string
-    :return:
-    '''
+    :param lista: lista de obiecte
+    :return: o lista continand atat elementele vechi cat si noul obiect
+    """
+    if get_by_ID(ID, lista) is not None:
+        raise ValueError("ID-ul exista deja!")
+    if descriere == "":
+        raise ValueError("Descrierea nu poate fi nula!")
+    if len(locatie) !=4:
+        raise ValueError("Locatia trebuie sa aiba exact 4 caractere!")
+    obiect = creeaza_obiect(ID, nume, descriere, pret_achizitie, locatie)
+    return lista + [obiect]
 
-    x = create_obiect(id, nume, descriere, pret_achizitie, locatie)
-    obiect.append(x)
 
-def modify_obiect(obiect, id, nume, descriere, pret_achizitie, locatie):
+def get_by_ID(ID, lista):
+    """
+    functia da obiectul cu ID-ul dat dintr-o lista
+    :param ID: string
+    :param lista: o lista de obiecte
+    :return: obiectul cu ID-ul dat din lista sau None, daca acesta nu exista
+    """
+    for obiect in lista:
+        if get_ID(obiect) == ID:
+            return obiect
+    return None
 
-    '''
 
-    Modifica atributele unui obiect dupa id-ul sau
-    :param obiect:
-    :param id:
-    :param nume:
-    :param descriere:
-    :param pret_achizitie:
-    :param locatie:
-    :return:
-    '''
+def sterge_obiect(ID, lista):
+    """
+    functia sterge un obiect cu un ID dat din lista
+    :param ID: string
+    :param lista: o lista de obiecte
+    :return: lista de obiecte fara obiectul cu ID-ul dat
+    """
+    if get_by_ID(ID, lista) is None:
+        raise ValueError("Nu exista obiect cu ID-ul dat!")
+    return [obiect for obiect in lista if get_ID(obiect) != ID]
 
-    obiect_nou = []
-    for x in obiect:
-        if get_id(x) == id:
-            x_nou = create_obiect(id, nume, descriere, pret_achizitie, locatie)
-            obiect_nou.append(x_nou)
+
+def modifica_obiect(ID, nume, descriere, pret_acizitie, locatie, lista):
+    """
+    functia modifica o prajitura dupa ID
+    :param ID: string
+    :param nume: string
+    :param descriere: string
+    :param pret_achizitie: float
+    :param locatie: string
+    :param lista: o lista de obiecte
+    :return: lista de obiecte in care s-a modificat obiectul cu ID-ul dorit
+    """
+    if get_by_ID(ID, lista) is None:
+        raise ValueError("Nu exista obiect cu ID-ul dat!")
+    lista_noua = []
+    for obiect in lista:
+        if get_ID(obiect) == ID:
+            obiect_nou = creeaza_obiect(ID, nume, descriere, pret_acizitie, locatie)
+            lista_noua.append(obiect_nou)
         else:
-            obiect_nou.append(x)
-    return obiect_nou
-
-def delete_obiect(id, obiect):
-
-    '''
-
-    Sterge un obiect dupa id-ul sau
-    :param id: string
-    :param obiect: lista de obiecte
-    :return: lista fara obiectul de sters
-    '''
-
-    return [x for x in obiect if get_id(x) != id]
-
-
+            lista_noua.append(obiect)
+    return lista_noua
